@@ -13,7 +13,6 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
-    @IBOutlet weak var createWorldBtn: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,6 +57,10 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return node
     }
 */
+    @IBAction func create(_ sender: UIButton) {
+        print("create pressed")
+//        self.performSegue(withIdentifier: "ARViewSegue", sender: self)
+    }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
