@@ -39,24 +39,55 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         sceneView.addGestureRecognizer(tapGestureRecognizer)
     }
     
-    //MARK: Overrides
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-       
-        guard let touch = touches.first else {
-            return
-        }
-        let result = sceneView.hitTest(touch.location(in: sceneView), types: ARHitTestResult.ResultType.featurePoint)
+    @objc func handleTap(sender: UITapGestureRecognizer){
+        let tappedView = sender.view as! SCNView
+        let touchLocation = sender.location(in: tappedView)
+        let hitTest = tappedView.hitTest(touchLocation, options: nil)
+        
+        let result = sceneView.hitTest(touchLocation, types: ARHitTestResult.ResultType.featurePoint)
         guard let hitResult = result.last else {
             return
         }
-        
         let hitTransform = hitResult.worldTransform
-        let hitMat4 = SCNMatrix4(hitTransform)
-        let hitVector = SCNVector3Make(hitMat4.m41, hitMat4.m42, hitMat4.m43)
-        if isBuilding {
-            createObject(position: hitVector)
+        let hitMat = SCNMatrix4(hitTransform)
+        let hitVector = SCNVector3Make(hitMat.m41, hitMat.m42, hitMat.m43)
+        
+        
+        if !hitTest.isEmpty {
+            let result = hitTest.first!
+            let name = result.node.name
+            
+            if isBuilding{
+                createObject(position: hitVector)
+            } else if name == objectNode {
+                question.isHidden = false
+                answerView.isHidden = false
+            } else {
+                print("not object")
+            }
+        } else {
+            print("hitTest is empty")
         }
+        /*
+        if !hitTest.isEmpty && !isBuilding{
+            let result = hitTest.first!
+            let name = result.node.name
+            
+            // need to make this dynamic
+            if name == objectNode {
+                question.isHidden = false
+                answerView.isHidden = false
+                print("ask question")
+            } else {
+                print("not object")
+            }
+        } else if isBuilding{
+            createObject(position: hitVector)
+            print("create object")
+        } else {
+            print("not in building not and hitTest is empty")
+        }
+        */
     }
     
     //MARK: Actions
@@ -128,21 +159,5 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         return CGFloat(arc4random()) / CGFloat(UINT32_MAX) * abs(firstNum - secondNum) + min(firstNum, secondNum)
     }
     
-    @objc func handleTap(sender: UITapGestureRecognizer){
-        let tappedView = sender.view as! SCNView
-        let touchLocation = sender.location(in: tappedView)
-        let hitTest = tappedView.hitTest(touchLocation, options: nil)
-        if !hitTest.isEmpty {
-            let result = hitTest.first!
-            let name = result.node.name
-            
-            if name == objectNode && !isBuilding {
-                question.isHidden = false
-                answerView.isHidden = false
-            } else {
-                print("not object")
-            }
-        }
-    }
 }
 

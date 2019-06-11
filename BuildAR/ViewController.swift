@@ -60,7 +60,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     // MARK: Actions
     @IBAction func create(_ sender: UIButton) {
-        print("create pressed")
+//        print("create pressed")
     }
     
     // MARK: Functions
