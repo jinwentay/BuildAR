@@ -25,7 +25,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     var objectScene: String = ""
     var objectNode: String = ""
-    
+    var isBuilding: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,7 +42,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     //MARK: Overrides
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
+       
         guard let touch = touches.first else {
             return
         }
@@ -54,7 +54,9 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let hitTransform = hitResult.worldTransform
         let hitMat4 = SCNMatrix4(hitTransform)
         let hitVector = SCNVector3Make(hitMat4.m41, hitMat4.m42, hitMat4.m43)
-        createObject(position: hitVector)
+        if isBuilding {
+            createObject(position: hitVector)
+        }
     }
     
     //MARK: Actions
@@ -65,6 +67,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         resetButton.isHidden = true
         doneButton.isHidden = true
         buildButton.isHidden = false
+        
+        isBuilding = false
     }
     
     @IBAction func build(_ sender: UIButton) {
@@ -73,51 +77,35 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         resetButton.isHidden = false
         doneButton.isHidden = false
         buildButton.isHidden = true
+        question.isHidden = true
+        answerView.isHidden = true
+        
+        isBuilding = true
     }
     
     @IBAction func dog(_ sender: UIButton) {
-        
-        objectScene = "art.scnassets/Beagle/Mesh_Beagle.scn"
+        objectScene = "art.scnassets/beagle/Mesh_Beagle.scn"
         objectNode = "Beagle"
     }
     
     @IBAction func ship(_ sender: UIButton) {
-        
-        objectScene = "art.scnassets/Ship/ship.scn"
+        objectScene = "art.scnassets/ship/ship.scn"
         objectNode = "ship"
-        
-        /*
-         let node = SCNNode()
-         let boxNode = SCNNode(geometry: SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0))
-         let doorNode = SCNNode(geometry: SCNPlane(width: 0.03, height: 0.06))
-         node.geometry = SCNPyramid(width: 0.1, height: 0.1, length: 0.1)
-         boxNode.geometry?.firstMaterial?.diffuse.contents = UIColor.blue
-         doorNode.geometry?.firstMaterial?.diffuse.contents = UIColor.brown
-         
-         let x = randomNumbers(firstNum: -0.3, secondNum: 0.3)
-         let y = randomNumbers(firstNum: -0.3, secondNum: 0.3)
-         let z = randomNumbers(firstNum: -0.3, secondNum: 0.3)
-         node.position = SCNVector3Make(Float(x), Float(y), Float(z))
-         
-         node.geometry?.firstMaterial?.specular.contents = UIColor.orange
-         node.geometry?.firstMaterial?.diffuse.contents = UIColor.red
-         node.position = SCNVector3Make(0.15, 0, -0.3)
-         boxNode.position = SCNVector3Make(0, -0.05, 0)
-         doorNode.position = SCNVector3Make(0, -0.02, 0.053)
-         self.sceneView.scene.rootNode.addChildNode(node)
-         node.addChildNode(boxNode)
-         boxNode.addChildNode(doorNode)
-         */
-        
     }
     
     @IBAction func reset(_ sender: Any) {
         self.resetSession()
     }
     
+    @IBAction func answered(_ sender: UIButton) {
+        question.isHidden = true
+        answerView.isHidden = true
+    }
+    
     //MARK: Functions
     
     func createObject(position: SCNVector3) {
+        
         guard let objectScene = SCNScene(named: objectScene) else {
             return
         }
@@ -147,21 +135,14 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         if !hitTest.isEmpty {
             let result = hitTest.first!
             let name = result.node.name
-            let geometry = result.node.geometry
-            print("Tapped \(String(describing: name)) with geometry \(String(describing: geometry))")
             
-            if name == "Beagle" {
+            if name == objectNode && !isBuilding {
                 question.isHidden = false
                 answerView.isHidden = false
             } else {
-                print("Not Beagle")
+                print("not object")
             }
         }
-    }
-    
-    @IBAction func answered(_ sender: UIButton) {
-        question.isHidden = true
-        answerView.isHidden = true
     }
 }
 

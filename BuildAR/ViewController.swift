@@ -34,7 +34,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         super.viewWillAppear(animated)
         
         // Create a session configuration
-        let configuration = ARWorldTrackingConfiguration()
+//        let configuration = ARWorldTrackingConfiguration()
 
         // Run the view's session
         //sceneView.session.run(configuration)
@@ -57,11 +57,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return node
     }
 */
+    
+    // MARK: Actions
     @IBAction func create(_ sender: UIButton) {
         print("create pressed")
-//        self.performSegue(withIdentifier: "ARViewSegue", sender: self)
     }
     
+    // MARK: Functions
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
