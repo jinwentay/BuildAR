@@ -10,6 +10,8 @@ import UIKit
 import SceneKit
 import ARKit
 
+// TO DO: add comments, ask different questions for each object, create scrollable bar for objects, debug hit test
+
 class ARViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet weak var question: UILabel!
@@ -25,6 +27,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     var objectScene: String = ""
     var objectNode: String = ""
+    var objectSet = Set<String>()
     var isBuilding: Bool = true
     
     override func viewDidLoad() {
@@ -44,7 +47,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         let touchLocation = sender.location(in: tappedView)
         let hitTest = tappedView.hitTest(touchLocation, options: nil)
         
-        let result = sceneView.hitTest(touchLocation, types: ARHitTestResult.ResultType.featurePoint)
+        let result = sceneView.hitTest(touchLocation, types: ARHitTestResult.ResultType.estimatedHorizontalPlane)
         guard let hitResult = result.last else {
             return
         }
@@ -56,10 +59,11 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         if !hitTest.isEmpty {
             let result = hitTest.first!
             let name = result.node.name
+            print("tapped \(String(describing: name))")
             
             if isBuilding{
                 createObject(position: hitVector)
-            } else if name == objectNode {
+            } else if objectSet.contains(name ?? "null") {
                 question.isHidden = false
                 answerView.isHidden = false
             } else {
@@ -68,26 +72,6 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
         } else {
             print("hitTest is empty")
         }
-        /*
-        if !hitTest.isEmpty && !isBuilding{
-            let result = hitTest.first!
-            let name = result.node.name
-            
-            // need to make this dynamic
-            if name == objectNode {
-                question.isHidden = false
-                answerView.isHidden = false
-                print("ask question")
-            } else {
-                print("not object")
-            }
-        } else if isBuilding{
-            createObject(position: hitVector)
-            print("create object")
-        } else {
-            print("not in building not and hitTest is empty")
-        }
-        */
     }
     
     //MARK: Actions
@@ -121,7 +105,7 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     @IBAction func ship(_ sender: UIButton) {
         objectScene = "art.scnassets/ship/ship.scn"
-        objectNode = "ship"
+        objectNode = "shipMesh"
     }
     
     @IBAction func reset(_ sender: Any) {
@@ -137,14 +121,15 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     func createObject(position: SCNVector3) {
         
-        guard let objectScene = SCNScene(named: objectScene) else {
+        guard let createScene = SCNScene(named: objectScene) else {
             return
         }
-        guard let objectNode = objectScene.rootNode.childNode(withName: objectNode, recursively: true) else {
+        guard let createNode = createScene.rootNode.childNode(withName: objectNode, recursively: true) else {
             return
         }
-        objectNode.position = position
-        sceneView.scene.rootNode.addChildNode(objectNode)
+        createNode.position = position
+        sceneView.scene.rootNode.addChildNode(createNode)
+        objectSet.insert(objectNode)
     }
     
     func resetSession() {
