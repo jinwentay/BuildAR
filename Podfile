@@ -6,9 +6,11 @@ target 'BuildAR' do
   use_frameworks!
 
   # Pods for BuildAR
+  pod 'Firebase'
   pod 'Firebase/Analytics'
   pod 'Firebase/Storage'
-  pod 'FirebaseInstanceID','2.0.0'
+  pod 'Firebase/Database'
+  # pod 'FirebaseInstanceID','2.0.0'
 
   target 'BuildARTests' do
     inherit! :search_paths

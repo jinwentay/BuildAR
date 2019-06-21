@@ -9,6 +9,7 @@
 import UIKit
 import SceneKit
 import ARKit
+import Firebase
 
 class ViewController: UIViewController, ARSCNViewDelegate {
 
@@ -16,7 +17,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        // Upload an image
+        /*
+        let image = UIImage(named: "1")
+        let imageData = image?.jpegData(compressionQuality: 0.8)!
+        uploadImageToFirebaseStorage(data: imageData! as NSData)
+        */
+ 
         // Set the view's delegate
        /* sceneView.delegate = self
         
@@ -64,6 +72,19 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     // MARK: Functions
+    func uploadImageToFirebaseStorage(data: NSData) {
+        let storageRef = Storage.storage().reference(withPath: "myPics/demoPic.jpeg")
+        let uploadMeta = StorageMetadata()
+        uploadMeta.contentType = "image/jpeg"
+        storageRef.putData(data as Data, metadata: uploadMeta) { (metadata, error) in
+            if (error != nil) {
+                print("I received an error! \(String(describing: error?.localizedDescription))")
+            } else {
+                print("Upload complete! Here's some metadata! \(String(describing: metadata))")
+            }
+        }
+    }
+    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
