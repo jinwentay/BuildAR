@@ -17,7 +17,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Upload an image
         /*
         let image = UIImage(named: "1")
