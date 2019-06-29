@@ -12,15 +12,11 @@ import ARKit
 import FirebaseDatabase
 import Firebase
 
-var objectScene: String = ""
-var objectNode: String = ""
-
 class ARViewController: UIViewController, ARSCNViewDelegate {
     
-    @IBOutlet weak var itemView: UIView!
-    @IBOutlet weak var animalView: UIView!
-    @IBOutlet weak var vehicleView: UIView!
     @IBOutlet weak var question: UILabel!
+    @IBOutlet weak var shipButton: UIButton!
+    @IBOutlet weak var dogButton: UIButton!
     @IBOutlet weak var resetButton: UIButton!
     @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var buildButton: UIButton!
@@ -41,9 +37,8 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     var questionBranch = "animal"
     var questionID = 0
-    
-    
-    
+    var objectScene: String = ""
+    var objectNode: String = ""
     var objectSet = Set<String>()
     var inBuidingMode: Bool = true
     var text = ""
@@ -126,10 +121,12 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     // Goes into quiz mode
     @IBAction func done(_ sender: UIButton) {
+        shipButton.isHidden = true
+        dogButton.isHidden = true
         resetButton.isHidden = true
         doneButton.isHidden = true
         buildButton.isHidden = false
-        itemView.isHidden = true
+        
         inBuidingMode = false
         
         // Comment out later (for simulation debugging)
@@ -146,27 +143,28 @@ class ARViewController: UIViewController, ARSCNViewDelegate {
     
     // Goes into building mode
     @IBAction func build(_ sender: UIButton) {
+        shipButton.isHidden = false
+        dogButton.isHidden = false
         resetButton.isHidden = false
         doneButton.isHidden = false
         buildButton.isHidden = true
         question.isHidden = true
         answerView.isHidden = true
-        itemView.isHidden = false
+        
         inBuidingMode = true
     }
     
-    @IBAction func switchItems(_ sender: UISegmentedControl) {
-        if sender.selectedSegmentIndex == 0 {
-            animalView.alpha = 1//opaque
-            vehicleView.alpha = 0//hide other view
-        } else {
-            animalView.alpha = 0
-            vehicleView.alpha = 1
-        }
+    @IBAction func dog(_ sender: UIButton) {
+        objectScene = "art.scnassets/beagle/Mesh_Beagle.scn"
+        objectNode = "animal"
     }
     
+    @IBAction func ship(_ sender: UIButton) {
+        objectScene = "art.scnassets/ship/ship.scn"
+        objectNode = "vehicle"
+    }
     
-    @IBAction func reset(_ sender: UIButton) {
+    @IBAction func reset(_ sender: Any) {
         self.resetSession()
     }
     
